@@ -1,17 +1,32 @@
 ﻿using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
-
 
 namespace GestionTareas.API.Consumer
 {
+    public static class AuthConfig
+    {
+        public static string Token { get; set; }
+    }
 
     public static class Crud<T>
     {
         public static string EndPoint { get; set; }
 
+        private static HttpClient GetAuthenticatedClient()
+        {
+            var client = new HttpClient();
+            if (!string.IsNullOrEmpty(AuthConfig.Token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", AuthConfig.Token);
+            }
+            return client;
+        }
+
         public static List<T> GetAll()
         {
-            using (var client = new HttpClient())
+            using (var client = GetAuthenticatedClient())
             {
                 var response = client.GetAsync(EndPoint).Result;
                 if (response.IsSuccessStatusCode)
@@ -28,7 +43,7 @@ namespace GestionTareas.API.Consumer
 
         public static List<T> GetBy(string campo, int id)
         {
-            using (var client = new HttpClient())
+            using (var client = GetAuthenticatedClient())
             {
                 var response = client.GetAsync($"{EndPoint}/{campo}/{id}").Result;
                 if (response.IsSuccessStatusCode)
@@ -42,9 +57,10 @@ namespace GestionTareas.API.Consumer
                 }
             }
         }
+
         public static T GetById(int id)
         {
-            using (var client = new HttpClient())
+            using (var client = GetAuthenticatedClient())
             {
                 var response = client.GetAsync($"{EndPoint}/{id}").Result;
                 if (response.IsSuccessStatusCode)
@@ -61,7 +77,7 @@ namespace GestionTareas.API.Consumer
 
         public static T Create(T item)
         {
-            using (var client = new HttpClient())
+            using (var client = GetAuthenticatedClient())
             {
                 var response = client.PostAsync(
                         EndPoint,
@@ -86,7 +102,7 @@ namespace GestionTareas.API.Consumer
 
         public static bool Update(int id, T item)
         {
-            using (var client = new HttpClient())
+            using (var client = GetAuthenticatedClient())
             {
                 var response = client.PutAsync(
                         $"{EndPoint}/{id}",
@@ -110,7 +126,7 @@ namespace GestionTareas.API.Consumer
 
         public static bool Delete(int id)
         {
-            using (var client = new HttpClient())
+            using (var client = GetAuthenticatedClient())
             {
                 var response = client.DeleteAsync($"{EndPoint}/{id}").Result;
                 if (response.IsSuccessStatusCode)

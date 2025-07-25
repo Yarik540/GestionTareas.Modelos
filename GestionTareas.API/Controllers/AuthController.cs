@@ -1,4 +1,5 @@
-﻿using GestionTareas.Modelos;
+﻿using GestionTareas.Modelos.Auth;
+using GestionTareas.Modelos;
 using System.Data.Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -26,7 +27,7 @@ namespace GestionTareas.API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel login)
+        public IActionResult Login([FromBody] Login login)
         {
             var usuario = connection.QuerySingleOrDefault<Usuario>(
                 "SELECT * FROM usuarios WHERE email = @email AND password = @password",
@@ -64,9 +65,4 @@ namespace GestionTareas.API.Controllers
         }
     }
 
-    public class LoginModel
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
 }

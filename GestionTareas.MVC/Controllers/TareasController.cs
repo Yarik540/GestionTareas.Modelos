@@ -119,5 +119,29 @@ namespace GestionTareas.MVC.Controllers
                 return View(tarea);
             }
         }
+
+        
+        public ActionResult MisTareas()
+        {
+            ConfigurarToken();
+
+            var usuarioBytes = HttpContext.Session.Get("Usuario");
+            if (usuarioBytes == null) return RedirectToAction("Login", "Auth");
+
+            var todasTareas = Crud<Tarea>.GetAll();
+            var usuarios = Crud<Usuario>.GetAll();
+
+            var nombreUsuario = System.Text.Encoding.UTF8.GetString(usuarioBytes);
+            var usuarioLogueado = usuarios.FirstOrDefault(u => u.Nombre == nombreUsuario);
+
+            if (usuarioLogueado == null) return RedirectToAction("Login", "Auth");
+
+            var misTareas = todasTareas.Where(t => t.UsuarioAsignadoId == usuarioLogueado.Id).ToList();
+
+            ViewBag.Proyectos = Crud<Proyecto>.GetAll();
+            ViewBag.UsuarioActual = usuarioLogueado.Nombre;
+
+            return View(misTareas);
+        }
     }
 }

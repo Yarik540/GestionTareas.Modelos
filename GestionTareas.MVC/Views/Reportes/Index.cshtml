@@ -1,0 +1,250 @@
+﻿@model IEnumerable<GestionTareas.Modelos.Tarea>
+@{
+    ViewData["Title"] = "Reportes de Tareas";
+    var proyectos = ViewBag.Proyectos as IEnumerable<GestionTareas.Modelos.Proyecto>;
+    var usuarios = ViewBag.Usuarios as IEnumerable<GestionTareas.Modelos.Usuario>;
+    var filtrosAplicados = ViewBag.FiltrosAplicados ?? false;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Reportes de Tareas</h2>
+        <a asp-controller="Proyectos" asp-action="Index" class="btn btn-secondary">Volver a Proyectos</a>
+    </div>
+
+    <!-- Panel de Filtros -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Filtros de Búsqueda</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Filtrar" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Estado</label>
+                            <select name="estado" class="form-select">
+                                <option value="">Todos los estados</option>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="En Progreso">En Progreso</option>
+                                <option value="Completada">Completada</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Prioridad</label>
+                            <select name="prioridad" class="form-select">
+                                <option value="">Todas las prioridades</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Proyecto</label>
+                            <select name="proyecto" class="form-select">
+                                <option value="">Todos los proyectos</option>
+                                @if (proyectos != null)
+                                {
+                                    @foreach (var proyecto in proyectos)
+                                    {
+                                        <option value="@proyecto.Id">@proyecto.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario Asignado</label>
+                            <select name="usuario" class="form-select">
+                                <option value="">Todos los usuarios</option>
+                                @if (usuarios != null)
+                                {
+                                    @foreach (var usuario in usuarios)
+                                    {
+                                        <option value="@usuario.Id">@usuario.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Desde</label>
+                            <input type="date" name="fechaDesde" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Hasta</label>
+                            <input type="date" name="fechaHasta" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Filtrar</button>
+                                <a asp-action="Index" class="btn btn-outline-secondary">Limpiar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resumen de resultados -->
+    @if (filtrosAplicados)
+    {
+        <div class="alert alert-info">
+            <strong>Resultados filtrados:</strong> @Model.Count() tarea(s) encontrada(s)
+        </div>
+    }
+
+    <!-- Estadísticas rápidas usando LINQ -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-secondary">@Model.Where(t => t.Estado == "Pendiente").Count()</h5>
+                    <p class="card-text">Pendientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">@Model.Where(t => t.Estado == "En Progreso").Count()</h5>
+                    <p class="card-text">En Progreso</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-success">@Model.Where(t => t.Estado == "Completada").Count()</h5>
+                    <p class="card-text">Completadas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">@Model.Where(t => t.Prioridad == "Alta").Count()</h5>
+                    <p class="card-text">Alta Prioridad</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Lista de Tareas (@Model.Count() total)</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Proyecto</th>
+                                <th>Usuario Asignado</th>
+                                <th>Estado</th>
+                                <th>Prioridad</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var tarea in Model.OrderBy(t => t.FechaVencimiento))
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@tarea.Titulo</strong>
+                                        @if (!string.IsNullOrEmpty(tarea.Descripcion))
+                                        {
+                                            <br>
+
+                                            <small class="text-muted">@tarea.Descripcion</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (proyectos != null)
+                                        {
+                                            var proyecto = proyectos.FirstOrDefault(p => p.Id == tarea.ProyectoId);
+                                            <span>@(proyecto?.Nombre ?? $"Proyecto #{tarea.ProyectoId}")</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (tarea.UsuarioAsignadoId.HasValue && usuarios != null)
+                                        {
+                                            var usuario = usuarios.FirstOrDefault(u => u.Id == tarea.UsuarioAsignadoId);
+                                            <span>@(usuario?.Nombre ?? "Usuario desconocido")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin asignar</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge
+                                            @(tarea.Estado == "Completada" ? "bg-success" :
+                                              tarea.Estado == "En Progreso" ? "bg-warning" : "bg-secondary")">
+                                            @tarea.Estado
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge
+                                            @(tarea.Prioridad == "Alta" ? "bg-danger" :
+                                              tarea.Prioridad == "Media" ? "bg-warning" : "bg-info")">
+                                            @tarea.Prioridad
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (tarea.FechaVencimiento.HasValue)
+                                        {
+                                            var esVencida = tarea.FechaVencimiento.Value < DateTime.Now && tarea.Estado != "Completada";
+                                            <span class="@(esVencida ? "text-danger" : "")">
+                                                @tarea.FechaVencimiento.Value.ToString("dd/MM/yyyy")
+                                                @if (esVencida)
+                                                {
+                                                    <small><br>⚠️ Vencida</small>
+                                                }
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin fecha</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Tareas" asp-action="Edit" asp-route-id="@tarea.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No se encontraron tareas</h5>
+                    <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

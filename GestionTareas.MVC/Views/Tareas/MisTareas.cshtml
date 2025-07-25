@@ -1,0 +1,38 @@
+﻿@model IEnumerable<GestionTareas.Modelos.Tarea>
+@{
+    ViewData["Title"] = "Mis Tareas";
+}
+
+<div class="container mt-4">
+    <h2>Mis Tareas Asignadas</h2>
+    <p class="text-muted">Tareas asignadas a: <strong>@ViewBag.UsuarioActual</strong></p>
+
+    @if (Model.Any())
+    {
+        <!-- Usar la misma tabla de la vista Index -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr><th>Título</th><th>Proyecto</th><th>Estado</th><th>Prioridad</th><th>Vencimiento</th><th>Acciones</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var tarea in Model)
+                    {
+                        <tr>
+                            <td>@tarea.Titulo</td>
+                            <td>Proyecto #@tarea.ProyectoId</td>
+                            <td><span class="badge bg-secondary">@tarea.Estado</span></td>
+                            <td><span class="badge bg-info">@tarea.Prioridad</span></td>
+                            <td>@(tarea.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "Sin fecha")</td>
+                            <td><a asp-action="Edit" asp-route-id="@tarea.Id" class="btn btn-sm btn-warning">Editar</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No tienes tareas asignadas.</div>
+    }
+</div>

@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
 using GestionTareas.Modelos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +10,7 @@ namespace GestionTareas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuariosController : ControllerBase
     {
         public readonly DbConnection connection;
@@ -38,6 +40,7 @@ namespace GestionTareas.API.Controllers
 
         // POST api/usuarios
         [HttpPost]
+        [AllowAnonymous]
         public Usuario Post([FromBody] Usuario usuario)
         {
             connection.Execute("INSERT INTO usuarios (nombre, email, password, fechaCreacion) VALUES (@nombre, @email, @password, @fechaCreacion)", usuario);

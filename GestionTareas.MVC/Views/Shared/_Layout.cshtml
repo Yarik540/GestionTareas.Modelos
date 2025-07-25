@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GestionTareas.MVC</title>
+    <title>@ViewData["Title"] - Gestión de Tareas</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestionTareas.MVC.styles.css" asp-append-version="true" />
@@ -12,7 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GestionTareas.MVC</a>
+                <a class="navbar-brand" asp-controller="Proyectos" asp-action="Index">📋 Gestión de Tareas</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,19 +20,30 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-controller="Proyectos" asp-action="Index">📂 Proyectos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-controller="Tareas" asp-action="Index">✅ Tareas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
+                            <a class="nav-link text-dark" asp-controller="Tareas" asp-action="MisTareas">🎯 Mis Tareas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tareas" asp-action="Index">Tareas</a>
+                            <a class="nav-link text-dark" asp-controller="Reportes" asp-action="Index">📊 Reportes</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <span class="navbar-text me-3">
+                                👤 @{
+                                    var usuarioBytes = Context.Session.Get("Usuario");
+                                    var nombreUsuario = usuarioBytes != null ? System.Text.Encoding.UTF8.GetString(usuarioBytes) : "Usuario";
+                                }
+                                @nombreUsuario
+                            </span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+                            <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">🚪 Cerrar Sesión</a>
                         </li>
                     </ul>
                 </div>
@@ -44,10 +55,9 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - GestionTareas.MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Sistema de Gestión de Tareas
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
