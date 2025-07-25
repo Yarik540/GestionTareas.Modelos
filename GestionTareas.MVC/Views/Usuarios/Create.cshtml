@@ -1,0 +1,39 @@
+﻿@model GestionTareas.Modelos.Usuario
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<div class="container mt-4">
+    <h2>Crear Nuevo Usuario</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label">Nombre Completo</label>
+                            <input asp-for="Nombre" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Contraseña</label>
+                            <input asp-for="Password" type="password" class="form-control" required />
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+

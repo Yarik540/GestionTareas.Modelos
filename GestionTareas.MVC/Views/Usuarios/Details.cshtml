@@ -1,0 +1,70 @@
+﻿@model GestionTareas.Modelos.Usuario
+@{
+    ViewData["Title"] = "Detalles del Usuario";
+    var tareas = ViewBag.Tareas as IEnumerable<GestionTareas.Modelos.Tarea>;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>@Model.Nombre</h2>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Fecha de Registro:</strong> @Model.FechaCreacion.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+
+    <h4>Tareas Asignadas</h4>
+
+    @if (tareas != null && tareas.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Proyecto</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tarea in tareas)
+                    {
+                        <tr>
+                            <td>@tarea.Titulo</td>
+                            <td>Proyecto #@tarea.ProyectoId</td>
+                            <td>
+                                <span class="badge 
+                                    @(tarea.Estado == "Completada" ? "bg-success" : 
+                                      tarea.Estado == "En Progreso" ? "bg-warning" : "bg-secondary")">
+                                    @tarea.Estado
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    @(tarea.Prioridad == "Alta" ? "bg-danger" : 
+                                      tarea.Prioridad == "Media" ? "bg-warning" : "bg-info")">
+                                    @tarea.Prioridad
+                                </span>
+                            </td>
+                            <td>@(tarea.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "Sin fecha")</td>
+                            <td>
+                                <a asp-controller="Tareas" asp-action="Edit" asp-route-id="@tarea.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Este usuario no tiene tareas asignadas.</div>
+    }
+</div>
