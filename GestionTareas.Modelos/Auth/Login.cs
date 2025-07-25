@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestionTareas.Modelos
+namespace GestionTareas.Modelos.Auth
 {
-    public class LoginModel
+    public class Login
     {
         public string Email { get; set; }
         public string Password { get; set; }
